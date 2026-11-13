@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fitness Data</title>
+  <meta name="description" content="Zackary's training log from Project Z: strength, load-cell force, cardio, and body weight, open for anyone to explore.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <main>
+    <header class="top">
+      <div>
+        <h1>Fitness data</h1>
+        <p class="sub">Zackary's training log from Project Z. Strength sets, load-cell force readings, cardio, and body weight, open for anyone to explore.</p>
+      </div>
+      <p class="meta" id="updated">Loading…</p>
+    </header>
+
+    <div class="chips" id="range" role="group" aria-label="Date range">
+      <button data-range="30">30 days</button>
+      <button data-range="90">90 days</button>
+      <button data-range="365">1 year</button>
+      <button data-range="all">All</button>
+    </div>
+
+    <div id="empty" class="empty" hidden></div>
+
+    <div id="content" hidden>
+      <section class="tiles" id="tiles"></section>
+
+      <nav class="toc" aria-label="Sections">
+        <a href="#weekly">Weekly totals</a>
+        <a href="#when">When</a>
+        <a href="#day">By day</a>
+        <a href="#muscles">Muscles</a>
+        <a href="#balance">Balance</a>
+        <a href="#progress">Exercise history</a>
+        <a href="#sides">Left vs right</a>
+        <a href="#summary">Every exercise</a>
+        <a href="#bodyweight">Body weight</a>
+        <a href="#prs">Records</a>
+        <a href="#explore">Raw data</a>
+      </nav>
+
+      <section id="weekly">
+        <h2>Weekly totals</h2>
+        <div class="row">
+          <label for="weekly-metric">Measure</label>
+          <select id="weekly-metric">
+            <option value="days">Training days</option>
+            <option value="sessions">Workouts</option>
+            <option value="minutes">Workout time</option>
+            <option value="sets">Working sets</option>
+            <option value="tonnage">Volume lifted (load × reps)</option>
+            <option value="cardio">Cardio minutes</option>
+            <option value="calories">Calories burned</option>
+          </select>
+        </div>
+        <p class="hint" id="weekly-hint"></p>
+        <div class="chart" id="weekly-chart"></div>
+      </section>
+
+      <section id="when">
+        <h2>Training calendar</h2>
+        <p class="hint">Each square is a day, shaded by entries logged (sets, efforts, cardio). Weeks start on Monday. Click a day to see its workouts.</p>
+        <div class="heat-wrap" id="calendar"></div>
+        <h2 class="sub-h">Time of day</h2>
+        <p class="hint">Entries by weekday and the hour they were logged, in your browser's time zone.</p>
+        <div class="heat-wrap" id="punchcard"></div>
+      </section>
+
+      <section id="day">
+        <h2>Workouts by day</h2>
+        <p class="hint">Pick any day, or step through training days. Shows every workout and entry logged that day, in order.</p>
+        <div class="row">
+          <button id="day-prev" title="Previous training day">‹ Previous</button>
+          <input type="date" id="day-date" aria-label="Day">
+          <button id="day-next" title="Next training day">Next ›</button>
+          <button id="day-latest">Latest</button>
+        </div>
+        <div id="day-view"></div>
+      </section>
+
+      <section id="muscles">
+        <h2>Weekly sets by muscle</h2>
+        <p class="hint">Each strength set, load-cell effort, or timed hold counts 1 set for its primary muscles and 0.5 for its secondary ones. Cardio isn't counted. Pale rows are neglected muscles.</p>
+        <div class="heat-wrap" id="heat"></div>
+      </section>
+
+      <section id="balance">
+        <h2>Where the work goes</h2>
+        <p class="hint">Working sets in the selected range, counted the same way as above.</p>
+        <div class="tiles tiles-small" id="ratios"></div>
+        <div class="split">
+          <div>
+            <h3>By muscle</h3>
+            <div id="muscle-bars"></div>
+          </div>
+          <div>
+            <h3>By movement pattern</h3>
+            <div id="pattern-bars"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="progress">
+        <h2>Exercise history</h2>
+        <p class="hint">Pick an exercise to see how it's going and every time it was logged. Search matches names and other names (like "wall hits").</p>
+        <div class="row">
+          <input type="search" id="exercise-search" placeholder="Search exercises" aria-label="Search exercises">
+          <select id="exercise" aria-label="Exercise"></select>
+        </div>
+        <div id="exercise-about"></div>
+        <h3>Progress</h3>
+        <div class="row">
+          <label for="metric">Measure</label>
+          <select id="metric"></select>
+        </div>
+        <p class="hint" id="exercise-hint"></p>
+        <div class="chart" id="exercise-chart"></div>
+        <div id="curve-block" hidden>
+          <h3>Force curve</h3>
+          <p class="hint">Force through one load-cell effort, from its raw samples. The dashed line is the best effort on the same side, for comparison.</p>
+          <div class="row">
+            <label for="effort">Effort</label>
+            <select id="effort"></select>
+          </div>
+          <div class="chart" id="curve-chart"></div>
+        </div>
+        <h3>Every time it was logged</h3>
+        <p class="hint" id="history-hint"></p>
+        <div id="exercise-history"></div>
+      </section>
+
+      <section id="sides">
+        <h2>Left vs right</h2>
+        <p class="hint">Best left and best right in range for every exercise done one side at a time. The bar points to the stronger side; the gap is the difference as a share of the stronger side.</p>
+        <div class="table-wrap" id="lr"></div>
+      </section>
+
+      <section id="summary">
+        <h2>Every exercise</h2>
+        <p class="hint">Everything logged in range. Click a column to sort.</p>
+        <div class="table-wrap" id="summary-table"></div>
+      </section>
+
+      <section id="bodyweight">
+        <h2>Body weight</h2>
+        <p class="hint" id="bw-hint"></p>
+        <div class="chart" id="bw-chart"></div>
+      </section>
+
+      <section id="prs">
+        <h2>Personal records</h2>
+        <p class="hint">Estimated 1RM (Epley) only from loaded sets of 12 reps or fewer. Bodyweight and unloaded sets record most reps instead.</p>
+        <div class="table-wrap" id="prs-table"></div>
+      </section>
+
+      <section id="explore">
+        <h2>Explore the raw data</h2>
+        <p class="hint">The whole database runs in your browser. Download it, export any table as CSV, or query it with SQL (SQLite). Times are UTC epoch milliseconds; <code>local_date</code> is the training day.</p>
+        <p><a id="download-db" href="database/projectz-fitness.db" download>Download the SQLite database</a></p>
+        <div class="table-wrap" id="tables"></div>
+        <div class="row sql-label">
+          <label for="sql">SQL query</label>
+          <select id="examples" aria-label="Example queries"></select>
+        </div>
+        <textarea id="sql" spellcheck="false" rows="7"></textarea>
+        <div class="row">
+          <button id="run" class="primary">Run</button>
+          <button id="run-csv">Download result as CSV</button>
+        </div>
+        <p class="hint" id="sql-status"></p>
+        <div class="table-wrap" id="sql-result"></div>
+      </section>
+    </div>
+
+    <footer>Uploaded by the Project Z app after each nightly backup. Only fitness tables are published.</footer>
+  </main>
+  <div id="tip" class="tip" role="tooltip" hidden></div>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/sql-wasm.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
